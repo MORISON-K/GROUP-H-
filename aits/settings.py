@@ -99,10 +99,14 @@ WSGI_APPLICATION = 'aits.wsgi.application'
 
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
 
+db_path = tmpPostgres.path
+if isinstance(db_path, bytes):
+    db_path = db_path.decode('utf-8')
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': tmpPostgres.path.replace('/', ''),
+        'NAME': db_path.replace('/', ''),
         'USER': tmpPostgres.username,
         'PASSWORD': tmpPostgres.password,
         'HOST': tmpPostgres.hostname,
