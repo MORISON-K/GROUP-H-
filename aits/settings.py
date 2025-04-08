@@ -98,22 +98,33 @@ WSGI_APPLICATION = 'aits.wsgi.application'
 
 
 tmpPostgres = urlparse(os.getenv("DATABASE_URL"))
+database_url = os.environ.get("DATABASE_URL")
+if database_url:
+    tmpPostgres = urlparse(database_url)
+    db_path = tmpPostgres.path
+    if isinstance(db_path, bytes):
+        db_path = db_path.decode('utf-8')
+    # Remove only the leading slash
+    db_name = db_path.lstrip('/')
 
-db_path = tmpPostgres.path
-if isinstance(db_path, bytes):
-    db_path = db_path.decode('utf-8')
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': db_path.replace('/', ''),
-        'USER': tmpPostgres.username,
-        'PASSWORD': tmpPostgres.password,
-        'HOST': tmpPostgres.hostname,
-        'PORT': 5432,
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.postgresql',
+            'NAME': db_name,  # Use the database name without the leading slash
+            'USER': tmpPostgres.username,
+            'PASSWORD': tmpPostgres.password,
+            'HOST': tmpPostgres.hostname,
+            'PORT': tmpPostgres.port or 5432,
+        }
     }
-}
-
+else:
+    # Optionally, set up a fallback for development
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
