@@ -25,6 +25,7 @@ class CustomUserManager(BaseUserManager):
 
         # Method to create a superuser
     def create_superuser(self, username, email, password, **extra_fields):
+        # Default values for superuser
         extra_fields.setdefault('is_staff', True)
         extra_fields.setdefault('is_superuser', True)
         extra_fields.setdefault('role', 'academic registrar')  # Default role for superusers
@@ -103,8 +104,11 @@ class User(AbstractUser):
     department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, blank=True, related_name='users')
     
     programme = models.ForeignKey(Programme, on_delete=models.SET_NULL, null=True, blank=True, related_name='students')
+
+    # Permissions and groups
     groups = models.ManyToManyField('auth.Group', related_name='ait_users_groups', blank=True)
     user_permissions = models.ManyToManyField('auth.Permission', related_name='ait_users_permissions', blank=True)
+    
     objects = CustomUserManager()  # Attach the custom manager
 
     def __str__(self):
@@ -143,6 +147,8 @@ class Issue(models.Model):
         ('remarking', 'Remarking'),
         ('other', 'Other'),
     ]
+    year_of_study = models.CharField(max_length=20, null=True, blank=True)
+    semester = models.IntegerField(choices=[(1, 'First'), (2, 'Second')], null=True, blank=True)
     category = models.CharField(max_length=100, choices=ISSUE_CATEGORIES)
     description = models.TextField()
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='open')
