@@ -211,9 +211,10 @@ SIMPLE_JWT = {
 #     "http://127.0.0.1:3000",
 # ]
 
-CORS_ALLOWED_ORIGINS = [
-    "https://aits-five.vercel.app",
-]
+# CORS_ALLOWED_ORIGINS = [
+#     "https://aits-five.vercel.app",
+# ]
+CORS_ALLOW_ALL_ORIGINS = True
 
 CORS_ALLOW_CREDENTIALS = True
 
