@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status, viewsets
+from rest_framework import generics, permissions, status, viewsets,  mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from django.contrib.auth import get_user_model
@@ -13,7 +13,11 @@ from .serializers import UserRegistrationSerializer, UserSerializer, DepartmentS
 from .models import User, Department, Issue, College, Programme, IssueUpdate, Course, Notification, School
 from django.core.mail import send_mail
 from django.conf import settings
+from rest_framework.decorators import action
+from rest_framework.viewsets import ViewSet, GenericViewSet
 
+
+User = get_user_model()# Get the custom user model
 
 class SendEmailView(APIView):
     """
@@ -39,8 +43,6 @@ class SendEmailView(APIView):
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-
-User = get_user_model()# Get the custom user model
 
 
 class CustomTokenObtainSerializer(TokenObtainPairSerializer):
@@ -172,6 +174,7 @@ class IssueView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     
+    
 class YearOptionsView(APIView):
     permission_classes = [permissions.AllowAny]
 
@@ -288,4 +291,109 @@ class IssueCategoryOptionsView(APIView):
     def get(self, request):
         categories = Issue.ISSUE_CATEGORIES
         data = [{'value': value, 'display': display} for value, display in categories]
-        return Response(data)    
+        return Response(data)   
+
+class StudentIssueListView(generics.ListAPIView):
+    serializer_class = IssueSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        # Return issues only for the logged-in student
+        return Issue.objects.filter(student=self.request.user).order_by('-created_at') 
+    
+class IsAcademicRegistrar(permissions.BasePermission):
+    """
+    Allows access only to users whose .role == 'academic registrar'
+    """
+    def has_permission(self, request, view):
+        return bool(
+            request.user and
+            request.user.is_authenticated and
+            request.user.role == 'academic registrar'
+        )    
+    
+    
+class IssueWorkflowViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
+    queryset = Issue.objects.all()  # Changed from filtering 'open' issues
+    serializer_class = IssueSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=True, methods=['post'], permission_classes=[IsAcademicRegistrar])
+    def mark_in_progress(self, request, pk=None):
+        issue = self.get_object()
+        if issue.status != 'open':
+            return Response(
+                {"error": "Issue must be open to mark in progress"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        issue.status = 'in_progress'
+        issue.save()
+        return Response({"message": "Marked in progress."}, status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=['post'])
+    def resolve(self, request, pk=None):
+        issue = self.get_object()
+        # Ensure the issue is in 'in_progress' status
+        if issue.status != 'in_progress':
+            return Response(
+                {"error": "Issue must be in progress to resolve"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        # Ensure the current user is the assigned lecturer
+        if issue.assigned_to != request.user:
+            return Response(
+                {"error": "You are not assigned to this issue"},
+                status=status.HTTP_403_FORBIDDEN
+            )
+        issue.status = 'resolved'
+        issue.save()
+        return Response({"message": "Marked resolved."}, status=status.HTTP_200_OK)
+
+class LecturerByDepartmentView(generics.ListAPIView):
+    """
+    GET /lecturers/?department=<id> → list lecturers in that dept
+    """
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        dept_id = self.request.query_params.get('department')
+        return User.objects.filter(role='lecturer', department__id=dept_id)
+    
+class IssueViewSet(viewsets.ModelViewSet):
+    """
+    Provides list/retrieve/partial_update on /api/issues/
+    """
+    queryset = Issue.objects.all()
+    serializer_class = IssueSerializer
+    permission_classes = [permissions.IsAuthenticated] 
+
+    def perform_create(self, serializer):
+        # ensures student_id=request.user.id on creation
+        serializer.save(student=self.request.user)   
+
+
+class RegistrarIssueHistoryView(generics.ListAPIView):
+    """
+    GET /issues/history/ → list all issues for students in the registrar’s college,
+    ordered by most recent.
+    """
+    serializer_class = IssueSerializer
+    permission_classes = [permissions.IsAuthenticated, IsAcademicRegistrar]
+
+    def get_queryset(self):
+        # Only issues whose student is in the same college as the registrar
+        user = self.request.user
+        return Issue.objects.filter(student__college=user.college) \
+                            .order_by('-created_at')
+    
+
+class LecturerIssueListView(generics.ListAPIView):
+    """
+    GET /api/issues/assigned/ → list issues assigned to the current lecturer
+    """
+    serializer_class = IssueSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        return Issue.objects.filter(assigned_to=self.request.user).order_by('-created_at')    
