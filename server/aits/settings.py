@@ -46,10 +46,10 @@ EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Make sure your Heroku app domain is included
-ALLOWED_HOSTS = ['aits-259d36ab6747.herokuapp.com', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['https://grouph-h.onrender.com', 'group-h.vercel.app', 'localhost', '127.0.0.1', '*']
 
 # Add CSRF trusted origins for your domain
-CSRF_TRUSTED_ORIGINS = ['https://aits-259d36ab6747.herokuapp.com']
+CSRF_TRUSTED_ORIGINS = ['https://group-h.vercel.app']
 
 AUTH_USER_MODEL = 'AITS_USERS.User'
 
@@ -202,10 +202,11 @@ SIMPLE_JWT = {
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOWED_ORIGINS = [
+    "https://group-h.vercel.app",
     "http://localhost:5173",
     "http://localhost:3000",
     "http://127.0.0.1:3000",
-    "https://aits-259d36ab6747.herokuapp.com",
+    
 ]
 
 AUTHENTICATION_BACKENDS = [
