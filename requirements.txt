@@ -3,10 +3,8 @@ Django==5.1.5
 djangorestframework
 django-cors-headers
 dj-database-url
-gunicorn
+gunicorn==21.2.0
 psycopg2-binary
 whitenoise
 djangorestframework-simplejwt
 python-dotenv
-python-dotenv
-gunicorn==21.2.0
