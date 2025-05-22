@@ -1,6 +1,6 @@
 import axios from "axios"
 import { ACCESS_TOKEN } from "./constants"
-const BASE = import.meta.env.VITE_API_URL || "/api";
+const BASE = import.meta.env.VITE_API_URL || "https://grouph-h.onrender.com";
 const api = axios.create({
    
     baseURL: BASE,
