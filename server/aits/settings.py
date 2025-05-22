@@ -46,7 +46,7 @@ EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 
 # Make sure your Heroku app domain is included
-ALLOWED_HOSTS = ['https://grouph-h.onrender.com', 'group-h.vercel.app', 'localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['grouph-h.onrender.com', 'group-h.vercel.app', 'localhost', '127.0.0.1', '*']
 
 # Add CSRF trusted origins for your domain
 CSRF_TRUSTED_ORIGINS = ['https://group-h.vercel.app']
