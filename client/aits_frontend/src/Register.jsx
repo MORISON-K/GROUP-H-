@@ -34,9 +34,9 @@ const Register = ({ handlePageChange }) => {
     const fetchOptions = async () => {
       try {
         const [collegesRes, departmentsRes, programmesRes] = await Promise.all([
-          api.get('/api/colleges/'),
-          api.get('/api/departments/'),
-          api.get('/api/programmes/')
+          api.get('/colleges/'),
+          api.get('/departments/'),
+          api.get('/programmes/')
         ]);
         
         setColleges(collegesRes.data);
@@ -118,7 +118,7 @@ const Register = ({ handlePageChange }) => {
         payload.college_id = formData.college;
       }
 
-      await api.post("/api/auth/register/", payload);
+      await api.post("/auth/register/", payload);
       setLoading(false);
       handlePageChange("login");
     } catch (error) {

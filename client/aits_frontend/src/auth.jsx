@@ -16,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem(ACCESS_TOKEN);
     if (token) {
       try {
-        const response = await api.get('/api/auth/user/');
+        const response = await api.get('/auth/user/');
         setUser(response.data);
       } catch (error) {
         console.error('Failed to load user details:', error);
@@ -37,12 +37,12 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     try {
-      const response = await api.post('/api/auth/login/', credentials);
+      const response = await api.post('/auth/login/', credentials);
       localStorage.setItem(ACCESS_TOKEN, response.data.access);
       localStorage.setItem(REFRESH_TOKEN, response.data.refresh);
       
       // Immediately fetching user details after login
-      const userResponse = await api.get('/api/auth/user/');
+      const userResponse = await api.get('/auth/user/');
       setUser(userResponse.data);
       
       return userResponse.data; // Return user data for immediate use
@@ -58,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     
     try {
        if (refreshToken) {
-    await api.post('/api/auth/logout/', { refresh: refreshToken });
+    await api.post('/auth/logout/', { refresh: refreshToken });
   }
     } catch (error) {
       console.error('Logout error:', error);

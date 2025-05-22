@@ -1,6 +1,6 @@
 import axios from "axios"
 import { ACCESS_TOKEN } from "./constants"
-const BASE = import.meta.env.VITE_API_URL || '';
+const BASE = import.meta.env.VITE_API_URL || "/api";
 const api = axios.create({
    
     baseURL: BASE,

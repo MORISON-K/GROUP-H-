@@ -28,10 +28,10 @@ function IssueSubmission_form() {
       try {
         // Fetch all options in parallel.
         const [yearsRes, semestersRes, coursesRes, issueCategoriesRes] = await Promise.all([
-          api.get('/api/years/'),
-          api.get('/api/semesters/'),
-          api.get('/api/courses/'),
-          api.get('/api/issue-categories/')
+          api.get('/years/'),
+          api.get('/semesters/'),
+          api.get('/courses/'),
+          api.get('/issue-categories/')
         ]);
         
         // Validate and set course options.
@@ -105,7 +105,7 @@ function IssueSubmission_form() {
         course: parseInt(formData.courseUnit), // Ensure numeric course ID
       };
       
-      const response = await api.post('/api/issues/', payload);
+      const response = await api.post('/issues/', payload);
       
       if (response.status === 201) {
         alert("Issue submitted successfully!");

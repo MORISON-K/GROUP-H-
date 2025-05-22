@@ -61,7 +61,7 @@ const RecentHistoryTable = () => {
   useEffect(() => {
     const fetchStudentIssues = async () => {
       try {
-        const response = await api.get('/api/my-issues/');
+        const response = await api.get('/my-issues/');
         setIssues(response.data);
       } catch (error) {
         console.error("Failed to fetch issues:", error);

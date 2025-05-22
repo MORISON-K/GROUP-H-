@@ -15,7 +15,7 @@ const ManageAndAssignIssues = () => {
   // Load all open issues
   useEffect(() => {
     setLoadingIssues(true)
-    api.get('/api/issues/workflow/')
+    api.get('/issues/workflow/')
       .then(res => setIssues(res.data))
       .catch(err => console.error('Failed to load issues', err))
       .finally(() => setLoadingIssues(false));
@@ -25,7 +25,7 @@ const ManageAndAssignIssues = () => {
   useEffect(() => {
     if (selectedIssue?.course_details) {
       const deptId = selectedIssue.course_details.department.id;
-      api.get('/api/lecturers/', { params: { department: deptId } })
+      api.get('/lecturers/', { params: { department: deptId } })
         .then(res => setLecturers(res.data))
         .catch(err => console.error('Failed to load lecturers', err));
     } else {
@@ -41,9 +41,9 @@ const ManageAndAssignIssues = () => {
     }
 
     // 2-step assign: mark in_progress, then set assigned_to
-    api.post(`/api/issues/workflow/${selectedIssue.id}/mark_in_progress/`)
+    api.post(`/issues/workflow/${selectedIssue.id}/mark_in_progress/`)
       .then(() =>
-        api.patch(`/api/issues/${selectedIssue.id}/`, { assigned_to: selectedLecturer })
+        api.patch(`/issues/${selectedIssue.id}/`, { assigned_to: selectedLecturer })
       )
       .then(() => {
         setIssues(prev =>

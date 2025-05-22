@@ -90,7 +90,7 @@ const AssignedIssues = () => {
   
   useEffect(() => {
     api
-      .get("/api/issues/assigned/")
+      .get("/issues/assigned/")
       .then((res) => {
         setIssues(res.data);
       })
@@ -157,7 +157,7 @@ const AssignedIssues = () => {
 
   function handleResolveIssue(issueId) {
     api
-      .post(`/api/issues/${issueId}/resolve/`)
+      .post(`/issues/${issueId}/resolve/`)
       .then(() => {
         // Update the issues list after resolving
         setIssues(issues.map(issue => 
@@ -177,7 +177,7 @@ const RecentHistoryTable = () => {
 
   useEffect(() => {
     api
-      .get("/api/issues/assigned/")
+      .get("/issues/assigned/")
       .then((res) => {
         // Assuming res.data is an array of issues, some with status 'assigned' and some 'resolved'
         setHistory(res.data);

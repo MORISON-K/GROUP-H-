@@ -14,7 +14,7 @@ function ProtectedRoute({ children, allowedRoles }) {  // Added allowedRoles pro
     const refreshToken = async () => {
         const refreshToken = localStorage.getItem(REFRESH_TOKEN);
         try {
-            const res = await api.post("/api/token/refresh/", {
+            const res = await api.post("/token/refresh/", {
                 refresh: refreshToken,
             });
             
@@ -50,7 +50,7 @@ function ProtectedRoute({ children, allowedRoles }) {  // Added allowedRoles pro
 
         // 3. Verify token with backend
         try {
-            const userResponse = await api.get("/api/auth/user/");
+            const userResponse = await api.get("/auth/user/");
             
             // 4. Check role authorization if specified
             if (allowedRoles && !allowedRoles.includes(userResponse.data.role)) {
