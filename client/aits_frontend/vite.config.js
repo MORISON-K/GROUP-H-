@@ -3,7 +3,7 @@ import react from '@vitejs/plugin-react'
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command }) => {
-  const base = command === 'serve' ? '/' : '/static/';
+  const base = '/'; // Changed for Vercel compatibility
   return {
     plugins: [react()],
     build: {
@@ -12,7 +12,7 @@ export default defineConfig(({ command }) => {
       // assetsDir: 'assets', // This is the default and usually fine
       // manifest: true, // Optional: useful if you were to integrate with django-vite
     },
-    base: base, // Important: '/' for dev, '/static/' for build
+    base: base, // Set base to '/'
     server: {
       fs: {
         strict: false
