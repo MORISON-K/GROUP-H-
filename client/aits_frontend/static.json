@@ -6,8 +6,7 @@
     },
     "proxies": {
       "/api/": {
-        "origin": "https://aits-259d36ab6747.herokuapp.com/api/"
+        "origin": "https://grouph-h.onrender.com/api/"
       }
     }
   }
-  
