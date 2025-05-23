@@ -1156,7 +1156,7 @@ tbody tr:hover {
 
 
   
-  * Modern color scheme */
+  /* Modern color scheme */
   :root {
 	  --primary-color: #4A90E2;
 	  --secondary-color: #50E3C2;
