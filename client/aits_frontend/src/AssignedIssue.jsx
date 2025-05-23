@@ -16,14 +16,14 @@ const AssignedIssues = () => {
 
   // 1) load my assigned issues on mount
   useEffect(() => {
-    api.get('/issues/assigned/')
+    api.get('/api/issues/assigned/')
       .then(res => setIssues(res.data))
       .catch(err => console.error("Failed to load assigned issues:", err));
   }, []);
 
   // 2) resolve handler
   const handleResolve = (issueId) => {
-    api.post(`/issues/workflow/${issueId}/resolve/`)
+    api.post(`api/issues/workflow/${issueId}/resolve/`)
       .then(() => {
         setIssues(prev =>
           prev.map(i =>

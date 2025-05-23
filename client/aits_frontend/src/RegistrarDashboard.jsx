@@ -72,7 +72,7 @@ const RecentHistoryTable = () => {
     setLoadingIssues(true)
     const fetchRegistrarHistory = async () => {
       try {
-        const response = await api.get('/issues/history/');
+        const response = await api.get('/api/issues/history/');
         setIssues(response.data);
         setLoadingIssues(false);
       } catch (error) {
